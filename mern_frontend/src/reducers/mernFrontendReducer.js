@@ -1,5 +1,7 @@
 import { combineReducers } from 'redux';
 
-const mernFrontendReducer = combineReducers({});
+import data from './dataReducer';
+
+const mernFrontendReducer = combineReducers({ data });
 
 export default mernFrontendReducer;
