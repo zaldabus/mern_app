@@ -5,8 +5,7 @@ import mernFrontendReducer from '../reducers/mernFrontendReducer';
 const initialState = {
   data: [],
   id: 0,
-  message: null,
-  intervalIsSet: false,
+  message: '',
   idToDelete: null,
   idToUpdate: null,
   objectToUpdate: null,

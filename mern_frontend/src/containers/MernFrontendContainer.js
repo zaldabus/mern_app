@@ -6,7 +6,6 @@ const mapStateToProps = (state) => ({
 	data: state.data,
   id: state.id,
   message: state.message,
-  intervalIsSet: state.intervalIsSet,
   idToDelete: state.idToDelete,
   idToUpdate: state.idToUpdate,
   objectToUpdate: state.objectToUpdate,

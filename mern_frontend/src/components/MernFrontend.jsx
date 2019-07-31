@@ -4,16 +4,7 @@ import axios from 'axios';
 class MernFrontend extends Component {
   // when component mounts, first thing it does is fetch all existing data in our db
   componentDidMount() {
-    this.props.fetchItems();
-  }
-
-  // never let a process live forever
-  // always kill a process everytime we are done using it
-  componentWillUnmount() {
-    if (this.state.intervalIsSet) {
-      clearInterval(this.state.intervalIsSet);
-      this.setState({ intervalIsSet: null });
-    }
+    this.props.fetchItemsFromDB();
   }
 
   // just a note, here, in the front end, we use the id key of our data object
@@ -21,27 +12,18 @@ class MernFrontend extends Component {
   // for our back end, we use the object id assigned by MongoDB to modify
   // data base entries
 
-  // our first get method that uses our backend api to
-  // fetch data from our data base
-  getDataFromDb = () => {
-    fetch('http://localhost:3001/api/getData')
-      .then((data) => data.json())
-      .then((res) => this.setState({ data: res.data }));
-  };
-
-  // our put method that uses our backend api
-  // to create new query into our data base
-  putDataToDB = (message) => {
+  // our insert method that uses our backend api
+  // to create new query into our database
+  createNewItem = (message) => {
     let currentIds = this.props.data.map((data) => data.id);
     let idToBeAdded = 0;
+
     while (currentIds.includes(idToBeAdded)) {
       ++idToBeAdded;
     }
 
-    axios.post('http://localhost:3001/api/putData', {
-      id: idToBeAdded,
-      message: message,
-    });
+    this.props.addItemToList(idToBeAdded, message);
+    this.props.addItemToDB(idToBeAdded, message);
   };
 
   // our delete method that uses our backend api
@@ -49,7 +31,7 @@ class MernFrontend extends Component {
   deleteFromDB = (idTodelete) => {
     parseInt(idTodelete);
     let objIdToDelete = null;
-    this.state.data.forEach((dat) => {
+    this.props.data.forEach((dat) => {
       if (dat.id == idTodelete) {
         objIdToDelete = dat._id;
       }
@@ -89,22 +71,23 @@ class MernFrontend extends Component {
         <ul>
           {data.length <= 0
             ? 'NO DB ENTRIES YET'
-            : data.map((dat) => (
-                <li style={{ padding: '10px' }} key={data.message}>
-                  <span style={{ color: 'gray' }}> id: </span> {dat.id} <br />
+            : data.map((item) => (
+                <li style={{ padding: '10px' }} key={item.id}>
+                  <span style={{ color: 'gray' }}> id: </span> {item.id} <br />
                   <span style={{ color: 'gray' }}> data: </span>
-                  {dat.message}
+                  {item.message}
                 </li>
               ))}
         </ul>
         <div style={{ padding: '10px' }}>
           <input
             type="text"
-            onChange={(e) => this.setState({ message: e.target.value })}
+            value={this.props.message}
+            onChange={(e) => this.props.updateMessage(e.target.value)}
             placeholder="add something in the database"
             style={{ width: '200px' }}
           />
-          <button onClick={() => this.putDataToDB(this.state.message)}>
+          <button onClick={() => this.createNewItem(this.props.message)}>
             ADD
           </button>
         </div>
